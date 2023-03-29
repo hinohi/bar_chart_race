@@ -59,29 +59,3 @@ _BCR.bar_chart_race.__doc__ = re.sub('df : .*(?=filename :)', '', bcr.__doc__, f
 _BCR.line_chart_race.__doc__ = re.sub('df : .*(?=filename :)', '', lcr.__doc__, flags=re.S)
 _BCR.prepare_wide_data.__doc__ = re.sub('df : .*(?=filename :)', '', pwd.__doc__, flags=re.S)
 _BCR.prepare_long_data.__doc__ = re.sub('df : .*(?=filename :)', '', pld.__doc__, flags=re.S)
-
-import importlib
-
-if importlib.util.find_spec('plotly'):
-    from ._bar_chart_race_plotly import bar_chart_race_plotly as bcrp
-
-
-    def bar_chart_race_plotly(self, filename=None, orientation='h', sort='desc', n_bars=None,
-                              fixed_order=False, fixed_max=False, steps_per_period=10,
-                              period_length=500, end_period_pause=0, interpolate_period=False,
-                              period_label=True, period_template=None, period_summary_func=None,
-                              perpendicular_bar_func=None, colors=None, title=None, bar_size=.95,
-                              bar_textposition='outside', bar_texttemplate=None, bar_label_font=None,
-                              tick_label_font=None, hovertemplate=None, slider=True, scale='linear',
-                              bar_kwargs=None, layout_kwargs=None, write_html_kwargs=None,
-                              filter_column_colors=False):
-        return bcrp(self._df, filename, orientation, sort, n_bars, fixed_order, fixed_max,
-                    steps_per_period, period_length, end_period_pause, interpolate_period,
-                    period_label, period_template, period_summary_func, perpendicular_bar_func,
-                    colors, title, bar_size, bar_textposition, bar_texttemplate, bar_label_font,
-                    tick_label_font, hovertemplate, slider, scale, bar_kwargs, layout_kwargs,
-                    write_html_kwargs, filter_column_colors)
-
-
-    setattr(_BCR, 'bar_chart_race_plotly', bar_chart_race_plotly)
-    _BCR.bar_chart_race_plotly.__doc__ = re.sub('df : .*(?=filename :)', '', bcrp.__doc__, flags=re.S)
