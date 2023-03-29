@@ -1,9 +1,11 @@
+import sys
 import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.colors import Colormap
+from tqdm import tqdm, tqdm_notebook
 
 from ._common_chart import CommonChart
 from ._func_animation import FuncAnimation
@@ -17,7 +19,7 @@ class _BarChartRace(CommonChart):
                  period_label, period_template, period_summary_func, perpendicular_bar_func,
                  colors, title, bar_size, bar_textposition, bar_texttemplate, bar_label_font,
                  tick_label_font, tick_template, shared_fontdict, scale, fig, writer,
-                 bar_kwargs, fig_kwargs, filter_column_colors):
+                 bar_kwargs, fig_kwargs, filter_column_colors, progress):
         self.filename = filename
         self.extension = self.get_extension()
         self.orientation = orientation
@@ -57,6 +59,14 @@ class _BarChartRace(CommonChart):
         self.fig_kwargs = self.get_fig_kwargs(fig_kwargs)
         self.subplots_adjust = self.get_subplots_adjust()
         self.fig = self.get_fig(fig)
+
+        if progress:
+            if 'IPython' in sys.modules:
+                self.tqdm = tqdm_notebook(total=len(self.df_values))
+            else:
+                self.tqdm = tqdm(total=len(self.df_values))
+        else:
+            self.tqdm = None
 
     def validate_params(self):
         if isinstance(self.filename, str):
@@ -454,6 +464,8 @@ class _BarChartRace(CommonChart):
     def anim_func(self, i):
         if i is None:
             return
+        if self.tqdm is not None:
+            self.tqdm.update(1)
         ax = self.fig.axes[0]
         for bar in ax.containers:
             bar.remove()
@@ -495,9 +507,6 @@ class _BarChartRace(CommonChart):
                 except ImportError:
                     pass
             else:
-                fc = self.fig.get_facecolor()
-                if fc == (1, 1, 1, 0):
-                    fc = 'white'
                 ret_val = anim.save(self.filename, fps=self.fps, writer=self.writer,
                                     savefig_kwargs=savefig_kwargs)
         except Exception as e:
@@ -517,7 +526,8 @@ def bar_chart_race(df, filename=None, orientation='h', sort='desc', n_bars=None,
                    bar_textposition='outside', bar_texttemplate='{x:,.0f}',
                    bar_label_font=None, tick_label_font=None, tick_template='{x:,.0f}',
                    shared_fontdict=None, scale='linear', fig=None, writer=None,
-                   bar_kwargs=None, fig_kwargs=None, filter_column_colors=False):
+                   bar_kwargs=None, fig_kwargs=None, filter_column_colors=False,
+                   progress=False):
     """
     Create an animated bar chart race using matplotlib. Data must be in
     'wide' format where each row represents a single time period and each
@@ -816,6 +826,9 @@ def bar_chart_race(df, filename=None, orientation='h', sort='desc', n_bars=None,
         This parameter is experimental and may be changed/removed
         in a later version.
 
+    progress : bool, default `False`
+        show progress
+
     Returns
     -------
     When `filename` is left as `None`, an HTML5 video is returned as a string.
@@ -872,5 +885,5 @@ def bar_chart_race(df, filename=None, orientation='h', sort='desc', n_bars=None,
                         period_label, period_template, period_summary_func, perpendicular_bar_func,
                         colors, title, bar_size, bar_textposition, bar_texttemplate,
                         bar_label_font, tick_label_font, tick_template, shared_fontdict, scale,
-                        fig, writer, bar_kwargs, fig_kwargs, filter_column_colors)
+                        fig, writer, bar_kwargs, fig_kwargs, filter_column_colors, progress)
     return bcr.make_animation()
