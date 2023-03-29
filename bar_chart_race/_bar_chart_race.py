@@ -343,7 +343,7 @@ class _BarChartRace(CommonChart):
 
     def get_bar_info(self, i):
         bar_location = self.df_ranks.iloc[i].values
-        top_filt = (bar_location > 0) & (bar_location < self.n_bars + 1)
+        top_filt = (bar_location > 0) & (bar_location < self.n_bars + 1) & (self.df_values.iloc[i].values > 0)
         bar_location = bar_location[top_filt]
         bar_length = self.df_values.iloc[i].values[top_filt]
         cols = self.df_values.columns[top_filt]
