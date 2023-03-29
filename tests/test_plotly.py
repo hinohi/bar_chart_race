@@ -1,12 +1,6 @@
-import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-import bar_chart_race as bcr
-import plotly.graph_objects as go
-import plotly
-from plotly.subplots import make_subplots
-from bar_chart_race import load_dataset, bar_chart_race_plotly
 
+from bar_chart_race import load_dataset, bar_chart_race_plotly
 
 df = load_dataset('covid19')
 df = df.iloc[-20:-10]
@@ -46,15 +40,16 @@ def test_all():
 
     bar_chart_race_plotly(df, n_bars=8, period_label=False)
 
-    bar_chart_race_plotly(df, n_bars=8, sort='asc', orientation='h', period_label={'bgcolor': 'orange', 
-                                                                                'font': {'color': 'blue', 'size': 30}})
+    bar_chart_race_plotly(df, n_bars=8, sort='asc', orientation='h', period_label={'bgcolor': 'orange',
+                                                                                   'font': {'color': 'blue',
+                                                                                            'size': 30}})
 
     bar_chart_race_plotly(df, n_bars=8, period_template='%b %d, %Y')
 
     bar_chart_race_plotly(df1, n_bars=8, period_template='{x:.1f}', interpolate_period=True)
 
-    bar_chart_race_plotly(df, n_bars=8, interpolate_period=False, bar_textposition='outside', 
-                        period_length=500, steps_per_period=10, fixed_max=True)
+    bar_chart_race_plotly(df, n_bars=8, interpolate_period=False, bar_textposition='outside',
+                          period_length=500, steps_per_period=10, fixed_max=True)
 
     def summary(values, ranks):
         total_deaths = int(round(values.sum(), -2))
@@ -78,12 +73,11 @@ def test_all():
 
     bar_chart_race_plotly(df, n_bars=6, sort='asc', colors='Accent', filter_column_colors=True)
 
-
     bar_chart_race_plotly(df, n_bars=6, colors=plt.cm.tab20.colors[:19])
 
     bar_chart_race_plotly(df, colors=['red', 'blue'], filter_column_colors=True)
 
-    bar_chart_race_plotly(df, n_bars=6, title={'text':'Great title', 'font': {'size': 40}, 'x': .5})
+    bar_chart_race_plotly(df, n_bars=6, title={'text': 'Great title', 'font': {'size': 40}, 'x': .5})
 
     bar_chart_race_plotly(df, n_bars=6, bar_label_font=8, tick_label_font=20)
 

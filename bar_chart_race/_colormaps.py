@@ -1,5 +1,4 @@
-colormaps = \
-{
+colormaps = {
     "dark12": [
         '#2E91E5',
         '#1CA71C',

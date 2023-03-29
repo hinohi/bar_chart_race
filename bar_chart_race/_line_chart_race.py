@@ -1,29 +1,24 @@
-import warnings
-from pathlib import Path
-
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
-from ._func_animation import FuncAnimation
-from matplotlib.collections import LineCollection
-from matplotlib import ticker, colors as mcolors, dates as mdates
+import numpy as np
+from matplotlib import colors as mcolors, dates as mdates
 from matplotlib import image as mimage
 from matplotlib import patches as mpatches
+from matplotlib.collections import LineCollection
 
 from ._common_chart import CommonChart
+from ._func_animation import FuncAnimation
 from ._utils import prepare_wide_data
-
 
 OTHERS_COLOR = .7, .7, .7, .6
 AGG_COLOR = 0, 0, 0, 1
 
 
 class _LineChartRace(CommonChart):
-    
-    def __init__(self, df, filename, n_lines, steps_per_period, period_length, 
-                 end_period_pause, period_summary_func, line_width_data, agg_line_func, 
-                 agg_line_kwargs, others_line_func, others_line_kwargs, fade, min_fade, 
-                 images, colors, title, line_label_font, tick_label_font, tick_template, 
+
+    def __init__(self, df, filename, n_lines, steps_per_period, period_length,
+                 end_period_pause, period_summary_func, line_width_data, agg_line_func,
+                 agg_line_kwargs, others_line_func, others_line_kwargs, fade, min_fade,
+                 images, colors, title, line_label_font, tick_label_font, tick_template,
                  shared_fontdict, scale, fig, writer, line_kwargs, fig_kwargs):
         self.filename = filename
         self.extension = self.get_extension()
@@ -83,7 +78,7 @@ class _LineChartRace(CommonChart):
                 text = kwargs.pop('s')
         else:
             raise TypeError(f'{kind}_line_kwargs must be a dictionary with line properties')
-        
+
         if 'linewidth' in kwargs:
             kwargs['lw'] = kwargs.pop('linewidth')
         if 'linestyle' in kwargs:
@@ -92,7 +87,7 @@ class _LineChartRace(CommonChart):
             return kwargs
         if 'c' in kwargs:
             kwargs['color'] = kwargs.pop('c')
-        
+
         kwargs['color'] = mcolors.to_rgba(kwargs['color'])
         return kwargs, text
 
@@ -134,8 +129,8 @@ class _LineChartRace(CommonChart):
         interpolate_period = True
         compute_ranks = sort = True
         orientation = 'h'
-        values, ranks =  prepare_wide_data(df, orientation, sort, self.n_lines, interpolate_period, 
-                                           self.steps_per_period, compute_ranks)
+        values, ranks = prepare_wide_data(df, orientation, sort, self.n_lines, interpolate_period,
+                                          self.steps_per_period, compute_ranks)
 
         idx = values.iloc[-1].sort_values(ascending=False).index
         top_cols, other_cols = idx[:self.n_lines], idx[self.n_lines:]
@@ -183,7 +178,7 @@ class _LineChartRace(CommonChart):
             colors = 'dark12'
             if self.df_values.shape[1] > 10:
                 colors = 'dark24'
-            
+
         if isinstance(colors, str):
             from ._colormaps import colormaps
             try:
@@ -219,7 +214,7 @@ class _LineChartRace(CommonChart):
         ax.set_axisbelow(True)
         ax.set_facecolor('.9')
         ax.set_title(**self.title)
-        
+
         min_val = self.df_values.min().min()
         max_val = self.df_values.max().max()
 
@@ -229,7 +224,7 @@ class _LineChartRace(CommonChart):
         elif self.others_agg_line is not None:
             min_val = min(min_val, self.others_agg_line.min())
             max_val = max(max_val, self.others_agg_line.max())
-            
+
         if self.agg_line is not None:
             min_val = min(min_val, self.agg_line.min())
             max_val = max(max_val, self.agg_line.max())
@@ -265,14 +260,14 @@ class _LineChartRace(CommonChart):
         fig = plt.Figure(**self.fig_kwargs)
         ax = fig.add_subplot()
         ax.plot(self.df_values)
-                
+
         self.prepare_axes(ax)
         fig.canvas.print_figure(io.BytesIO(), format='png')
-        xmin = min(label.get_window_extent().x0 for label in ax.get_yticklabels()) 
+        xmin = min(label.get_window_extent().x0 for label in ax.get_yticklabels())
         xmin /= (fig.dpi * fig.get_figwidth())
         left = ax.get_position().x0 - xmin + .01
 
-        ymin = min(label.get_window_extent().y0 for label in ax.get_xticklabels()) 
+        ymin = min(label.get_window_extent().y0 for label in ax.get_xticklabels())
         ymin /= (fig.dpi * fig.get_figheight())
         bottom = ax.get_position().y0 - ymin + .01
         return left, bottom
@@ -308,9 +303,9 @@ class _LineChartRace(CommonChart):
         if isinstance(images, list):
             images = dict(zip(self.df_values.columns, images))
         return {col: mimage.imread(image) for col, image in images.items()}
-            
+
     def get_visible(self, i):
-        n = 1_000_000 # make all visible until better logic here
+        n = 1_000_000  # make all visible until better logic here
         return (self.df_ranks.iloc[i] <= self.n_lines + n + .5).to_dict()
 
     def add_period_summary(self, ax, s):
@@ -319,7 +314,7 @@ class _LineChartRace(CommonChart):
             if 'x' not in text_dict or 'y' not in text_dict or 's' not in text_dict:
                 name = self.period_summary_func.__name__
                 raise ValueError(f'The dictionary returned from `{name}` must contain '
-                                  '"x", "y", and "s"')
+                                 '"x", "y", and "s"')
             return text_dict
 
     def anim_func(self, i):
@@ -408,7 +403,7 @@ class _LineChartRace(CommonChart):
 
     def init_func(self):
         ax = self.fig.axes[0]
-        s = self.df_values.iloc[0] # current Series
+        s = self.df_values.iloc[0]  # current Series
         s_all = self.all_values.iloc[0]
         if len(self.df_others) > 0:
             s_others = self.df_others.iloc[0]
@@ -423,7 +418,7 @@ class _LineChartRace(CommonChart):
             x_extra = 0
 
         visible = self.get_visible(0)
-        
+
         for col in self.df_values.columns:
             val = y[col]
             vis = visible[col]
@@ -512,7 +507,7 @@ class _LineChartRace(CommonChart):
                     for _ in range(pause):
                         frames.append(None)
             return frames
-        
+
         frames = frame_generator(len(self.df_values))
         anim = FuncAnimation(self.fig, self.anim_func, frames, self.init_func, interval=interval)
 
@@ -529,9 +524,9 @@ class _LineChartRace(CommonChart):
                 except ImportError:
                     pass
             else:
-                
-                ret_val = anim.save(self.filename, fps=self.fps, writer=self.writer, 
-                                    savefig_kwargs=savefig_kwargs) 
+
+                ret_val = anim.save(self.filename, fps=self.fps, writer=self.writer,
+                                    savefig_kwargs=savefig_kwargs)
         except Exception as e:
             message = str(e)
             raise Exception(message)
@@ -541,15 +536,15 @@ class _LineChartRace(CommonChart):
         return ret_val
 
 
-def line_chart_race(df, filename=None, n_lines=None, steps_per_period=10, 
-                    period_length=500, end_period_pause=0, period_summary_func=None, 
-                    line_width_data=None, agg_line_func=None, agg_line_kwargs=None, 
-                    others_line_func=None, others_line_kwargs=None, fade=1, min_fade=.3, 
-                    images=None, colors=None, title=None, line_label_font=None, 
-                    tick_label_font=None, tick_template='{x:,.0f}', shared_fontdict=None, 
-                    scale='linear', fig=None, writer=None, line_kwargs=None, 
+def line_chart_race(df, filename=None, n_lines=None, steps_per_period=10,
+                    period_length=500, end_period_pause=0, period_summary_func=None,
+                    line_width_data=None, agg_line_func=None, agg_line_kwargs=None,
+                    others_line_func=None, others_line_kwargs=None, fade=1, min_fade=.3,
+                    images=None, colors=None, title=None, line_label_font=None,
+                    tick_label_font=None, tick_template='{x:,.0f}', shared_fontdict=None,
+                    scale='linear', fig=None, writer=None, line_kwargs=None,
                     fig_kwargs=None):
-    '''
+    """
     Create an animated line chart race using matplotlib. Data must be in 
     'wide' format where each row represents a single time period and each 
     column represents a distinct category. Optionally, the index can label 
@@ -830,11 +825,11 @@ def line_chart_race(df, filename=None, n_lines=None, steps_per_period=10,
     Font size can also be a string - 'xx-small', 'x-small', 'small',  
         'medium', 'large', 'x-large', 'xx-large', 'smaller', 'larger'
     These sizes are relative to plt.rcParams['font.size'].
-    '''
+    """
 
-    lcr = _LineChartRace(df, filename, n_lines, steps_per_period, period_length, end_period_pause, 
-                         period_summary_func, line_width_data, agg_line_func, agg_line_kwargs, 
-                         others_line_func, others_line_kwargs, fade, min_fade, images, colors, 
-                         title, line_label_font, tick_label_font, tick_template, shared_fontdict, 
+    lcr = _LineChartRace(df, filename, n_lines, steps_per_period, period_length, end_period_pause,
+                         period_summary_func, line_width_data, agg_line_func, agg_line_kwargs,
+                         others_line_func, others_line_kwargs, fade, min_fade, images, colors,
+                         title, line_label_font, tick_label_font, tick_template, shared_fontdict,
                          scale, fig, writer, line_kwargs, fig_kwargs)
     return lcr.make_animation()

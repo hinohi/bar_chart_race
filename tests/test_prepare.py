@@ -1,4 +1,3 @@
-import pandas as pd
 import bar_chart_race as bcr
 
 
@@ -9,7 +8,6 @@ class TestLoadData:
 
     def test_load_covid(self):
         bcr.load_dataset('covid19')
-
 
 # class TestPrepareWideData:
 

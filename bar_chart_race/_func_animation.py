@@ -1,10 +1,10 @@
 import base64
-from io import BytesIO, TextIOWrapper
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from matplotlib import rcParams
 from matplotlib import animation
+from matplotlib import rcParams
+
 
 class FuncAnimation(animation.FuncAnimation):
 
@@ -33,10 +33,10 @@ class FuncAnimation(animation.FuncAnimation):
             If the *embed_limit* is exceeded, this returns the string
             "Video too large to embed."
         """
-        VIDEO_TAG = r'''<video {size} {options}>
+        VIDEO_TAG = r"""<video {size} {options}>
   <source type="video/mp4" src="data:video/mp4;base64,{video}">
   Your browser does not support the video tag.
-</video>'''
+</video>"""
         # Cache the rendering of the video as HTML
         if not hasattr(self, '_base64_video'):
             # Save embed limit, which is given in MB
@@ -70,7 +70,7 @@ class FuncAnimation(animation.FuncAnimation):
             else:
                 self._base64_video = vid64.decode('ascii')
                 self._video_size = 'width="{}" height="{}"'.format(
-                        *writer.frame_size)
+                    *writer.frame_size)
 
         # If we exceeded the size, this attribute won't exist
         if hasattr(self, '_base64_video'):

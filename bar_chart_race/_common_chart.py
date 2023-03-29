@@ -3,7 +3,7 @@ from matplotlib import ticker
 
 
 class CommonChart:
-        
+
     def get_extension(self):
         if self.filename:
             return self.filename.split('.')[-1]
@@ -34,8 +34,8 @@ class CommonChart:
         for k, v in shared_fontdict.items():
             if k not in ['fontsize', 'size']:
                 if k in ['cursive', 'family', 'fantasy', 'monospace', 'sans-serif', 'serif']:
-                        if isinstance(v, str):
-                            v = [v]
+                    if isinstance(v, str):
+                        v = [v]
                 if k == 'color':
                     plt.rcParams['text.color'] = v
                     plt.rcParams['xtick.color'] = v
@@ -45,9 +45,9 @@ class CommonChart:
                     plt.rcParams[f'font.{k}'] = v
                 except KeyError:
                     raise KeyError(f"{k} is not a valid key in `sharedfont_dict`"
-                                    "It must be one of "
-                                    "'cursive', 'family', 'fantasy', 'monospace', 'sans-serif',"
-                                    "'serif', 'stretch','style', 'variant', 'weight'")
+                                   "It must be one of "
+                                   "'cursive', 'family', 'fantasy', 'monospace', 'sans-serif',"
+                                   "'serif', 'stretch','style', 'variant', 'weight'")
         return orig_rcParams
 
     def get_writer(self, writer):

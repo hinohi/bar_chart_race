@@ -1,7 +1,7 @@
-import pytest
 import matplotlib.pyplot as plt
-from bar_chart_race import load_dataset, bar_chart_race
+import pytest
 
+from bar_chart_race import load_dataset, bar_chart_race
 
 df = load_dataset('covid19')
 df = df.iloc[-20:-16]
@@ -40,7 +40,7 @@ class TestSimpleBC:
         bar_chart_race(df, n_bars=8, bar_size=.99)
 
     def test_period_label(self):
-        bar_chart_race(df,  n_bars=8, period_label=False)
+        bar_chart_race(df, n_bars=8, period_label=False)
         bar_chart_race(df, n_bars=8, period_label={'x': .99, 'y': .1, 'ha': 'right'})
 
     def test_period_fmt(self):
@@ -54,12 +54,13 @@ class TestSimpleBC:
             return {'x': .99, 'y': .05, 's': s, 'ha': 'right', 'size': 8}
 
         bar_chart_race(df, n_bars=8, period_summary_func=summary)
-    
+
     def test_perpendicular_bar_func(self):
         bar_chart_race(df, n_bars=8, perpendicular_bar_func='mean')
+
         def func(values, ranks):
             return values.quantile(.9)
-        
+
         bar_chart_race(df, n_bars=8, perpendicular_bar_func=func)
 
     def test_period_length(self):
@@ -72,7 +73,7 @@ class TestSimpleBC:
         with pytest.warns(UserWarning):
             bar_chart_race(df, n_bars=6, sort='asc', colors='Accent')
 
-        bar_chart_race(df,  n_bars=6, sort='asc', colors='Accent', filter_column_colors=True)
+        bar_chart_race(df, n_bars=6, sort='asc', colors='Accent', filter_column_colors=True)
         bar_chart_race(df, n_bars=6, colors=plt.cm.tab20.colors[:19])
 
     def test_colors(self):
@@ -83,11 +84,11 @@ class TestSimpleBC:
 
     def test_title(self):
         bar_chart_race(df, n_bars=6, title='Great title')
-        bar_chart_race(df, n_bars=6, title={'label': 'Great title', 'size':20})
+        bar_chart_race(df, n_bars=6, title={'label': 'Great title', 'size': 20})
 
     def test_shared_fontdict(self):
-        bar_chart_race(df, n_bars=6, shared_fontdict={'family': 'Courier New', 
-                                            'weight': 'bold', 'color': 'teal'})
+        bar_chart_race(df, n_bars=6, shared_fontdict={'family': 'Courier New',
+                                                      'weight': 'bold', 'color': 'teal'})
 
     def test_scale(self):
         bar_chart_race(df, n_bars=6, scale='log')
@@ -106,4 +107,3 @@ class TestSimpleBC:
 
     def test_bar_kwargs(self):
         bar_chart_race(df, n_bars=6, bar_kwargs={'alpha': .2, 'ec': 'black', 'lw': 3})
-        
