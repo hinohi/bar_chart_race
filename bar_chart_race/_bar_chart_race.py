@@ -467,11 +467,7 @@ class _BarChartRace(CommonChart):
         if self.tqdm is not None:
             self.tqdm.update(1)
         ax = self.fig.axes[0]
-        for bar in ax.containers:
-            bar.remove()
-        start = int(bool(self.period_label))
-        for text in ax.texts[start:]:
-            text.remove()
+        ax.clear()
         self.plot_bars(ax, i)
 
     def make_animation(self):
